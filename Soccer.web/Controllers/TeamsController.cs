@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Soccer.web.Data;
 using Soccer.web.Data.Entities;
+using Soccer.Web.Data;
 
 namespace Soccer.web.Controllers
 {

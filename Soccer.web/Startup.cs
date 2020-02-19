@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Soccer.web.Data;
+using Soccer.Web.Data;
 
 namespace Soccer.web
 {
