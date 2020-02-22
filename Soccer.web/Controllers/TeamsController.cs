@@ -15,7 +15,7 @@ namespace Soccer.web.Controllers
     {
         private readonly DataContext _context;
 
-        public TeamsController(DataContext context)
+        public TeamsController(DataContext context) //Inyeccion de DB
         {
             _context = context;
         }
@@ -26,7 +26,7 @@ namespace Soccer.web.Controllers
             return View(await _context.Teams.ToListAsync());
         }
 
-        // GET: Teams/Details/5
+        
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -44,30 +44,46 @@ namespace Soccer.web.Controllers
             return View(teamEntity);
         }
 
-        // GET: Teams/Create
+         
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Teams/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,LogoPath")] TeamEntity teamEntity)
+        public async Task<IActionResult> Create(TeamEntity teamEntity)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(teamEntity);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+
+                }
+                catch(Exception ex)
+                {
+                    if(ex.InnerException.Message.Contains("duplicate"))  
+                    {
+                        ModelState.AddModelError(string.Empty, $"Already exists the team:{teamEntity.Name}");
+                       
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, ex.InnerException.Message);
+                    }
+                    
+                }
+                
             }
             return View(teamEntity);
         }
 
-        // GET: Teams/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        
+        public async Task<IActionResult>  Edit(int? id)
         {
             if (id == null)
             {
@@ -82,12 +98,10 @@ namespace Soccer.web.Controllers
             return View(teamEntity);
         }
 
-        // POST: Teams/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+ 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,LogoPath")] TeamEntity teamEntity)
+        public async Task<IActionResult> Edit(int id,TeamEntity teamEntity)
         {
             if (id != teamEntity.Id)
             {
@@ -96,24 +110,27 @@ namespace Soccer.web.Controllers
 
             if (ModelState.IsValid)
             {
+                _context.Update(teamEntity);
                 try
                 {
-                    _context.Update(teamEntity);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex) 
                 {
-                    if (!TeamEntityExists(teamEntity.Id))
+                    if (ex.InnerException.Message.Contains("duplicate"))
                     {
-                        return NotFound();
+                        ModelState.AddModelError(string.Empty, $"Already exists the team:{teamEntity.Name}");
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError(string.Empty, ex.InnerException.Message);
                     }
+
                 }
-                return RedirectToAction(nameof(Index));
+
             }
+            
             return View(teamEntity);
         }
 

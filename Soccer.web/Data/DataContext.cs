@@ -2,7 +2,7 @@
 using Soccer.web.Data.Entities;
 using Soccer.Web.Data.Entities;
 
-namespace Soccer.Web.Data 
+namespace Soccer.Web.Data
 {
     public class DataContext : DbContext
     {
@@ -19,5 +19,14 @@ namespace Soccer.Web.Data
         public DbSet<TeamEntity> Teams { get; set; }
 
         public DbSet<TournamentEntity> Tournaments { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<TeamEntity>()
+            .HasIndex(t => t.Name)
+            .IsUnique();
+
+        }
     }
 }
