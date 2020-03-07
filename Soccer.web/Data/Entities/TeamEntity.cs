@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Soccer.Web.Data.Entities;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Soccer.web.Data.Entities
 {
@@ -11,5 +13,8 @@ namespace Soccer.web.Data.Entities
         public string Name { get; set; }
 
         public string LogoPath { get; set; }
+
+        public ICollection<UserEntity> Users { get; set; }
     }
+
 }
